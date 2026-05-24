@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-fredoka);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-fredoka), system-ui, -apple-system, sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
