@@ -21,8 +21,12 @@ body {
 /*
  * Floating letters animate via CSS keyframes (not a JS animation library) so the
  * compositor runs them off the main thread. This keeps furious smashing smooth
- * even with dozens of letters on screen at once. `--rotate` is set per letter.
- * Steps map to the previous timing: 0% / 15% / 75% / 100%.
+ * even with dozens of letters on screen at once. `--rotate` and `--drift` are set
+ * per letter. Steps map to the previous timing: 0% / 15% / 75% / 100%.
+ *
+ * `--drift` gives each letter a gentle, varied sideways path. It stays 0 through
+ * the launch (0%/15%) so the letter still rises from its keyboard spot, then
+ * accrues as it floats up — so no two letters trace the exact same line.
  */
 @keyframes float-letter {
   0% {
@@ -35,17 +39,121 @@ body {
   }
   75% {
     opacity: 1;
-    transform: translateX(-50%) translateY(-45vh) scale(1) rotate(var(--rotate, 0deg));
+    transform: translateX(calc(-50% + var(--drift, 0px))) translateY(-45vh) scale(1)
+      rotate(var(--rotate, 0deg));
   }
   100% {
     opacity: 0;
-    transform: translateX(-50%) translateY(-62vh) scale(0.95) rotate(var(--rotate, 0deg));
+    transform: translateX(calc(-50% + var(--drift, 0px))) translateY(-62vh) scale(0.95)
+      rotate(var(--rotate, 0deg));
   }
 }
 
 .floating-letter {
   animation: float-letter 2.6s ease-out both;
   will-change: transform, opacity;
+}
+
+/*
+ * Confetti: a short-lived burst of pieces that erupts from the same spot a letter
+ * rises from. Each piece shoots out along its launch vector (`--lx`/`--ly`), then
+ * gravity (`--g`) pulls it down as it spins (`--rotate`) and fades. Pure compositor
+ * keyframe like the letters above; bursts self-remove on animationend.
+ */
+@keyframes confetti-pop {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.3) rotate(0deg);
+  }
+  12% {
+    opacity: 1;
+  }
+  40% {
+    transform: translate(calc(var(--lx) * 0.7), calc(var(--ly) * 0.7)) scale(1)
+      rotate(calc(var(--rotate) * 0.4));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--lx), calc(var(--ly) + var(--g))) scale(0.9)
+      rotate(var(--rotate));
+  }
+}
+
+.confetti-piece {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  border-radius: 2px;
+  animation: confetti-pop 1.1s ease-out both;
+  will-change: transform, opacity;
+}
+
+/*
+ * Ambient aurora: two large, soft, dark-toned blobs drifting very slowly behind
+ * everything. Sits at the start of <main> (no z-index needed — it paints behind
+ * the later, positioned letters in DOM order) and is rendered only when motion is
+ * allowed (gated in MainApp). Only `transform` animates, on its own compositor
+ * layer, so it costs nothing during furious smashing. Blobs hug the corners,
+ * keeping the centre — where letters rise — the calmest, highest-contrast area.
+ */
+.aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.aurora__blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.5;
+  mix-blend-mode: screen; /* additive glow against the dark gradient */
+  will-change: transform;
+}
+
+.aurora__blob--1 {
+  top: -16vmax;
+  left: -12vmax;
+  width: 60vmax;
+  height: 60vmax;
+  background: radial-gradient(circle, #1e3a8a, transparent 70%); /* deep blue */
+  animation: aurora-drift-1 48s ease-in-out infinite alternate;
+}
+
+.aurora__blob--2 {
+  right: -14vmax;
+  bottom: -18vmax;
+  width: 55vmax;
+  height: 55vmax;
+  background: radial-gradient(circle, #4c1d95, transparent 70%); /* deep violet */
+  animation: aurora-drift-2 60s ease-in-out infinite alternate;
+}
+
+@keyframes aurora-drift-1 {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(12vw, 8vh) scale(1.15);
+  }
+}
+
+@keyframes aurora-drift-2 {
+  from {
+    transform: translate(0, 0) scale(1.1);
+  }
+  to {
+    transform: translate(-10vw, -6vh) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Defensive: even if the layer shows for a hydration frame, it stays still. */
+  .aurora__blob {
+    animation: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

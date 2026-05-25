@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useKeyboardInput, type InputMode } from "@/hooks/use-keyboard-input";
 import { useSound } from "@/hooks/use-sound";
 import { useTouchDevice } from "@/hooks/use-touch-device";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { Confetti, type ConfettiHandle } from "./confetti-layer";
 import type { DisplayMode } from "./floating-letter";
 import { OnScreenKeyboard } from "./on-screen-keyboard";
@@ -17,6 +18,7 @@ export function MainApp() {
   const [showKeyboard, setShowKeyboard] = useState(false);
 
   const isTouch = useTouchDevice();
+  const reducedMotion = useReducedMotion();
   const { play, muted, toggleMuted, supported } = useSound();
 
   // Letters live in <Confetti/>; pushing one in imperatively keeps keystrokes
@@ -34,6 +36,15 @@ export function MainApp() {
       style={{ background: BACKGROUND }}
       onContextMenu={(e) => e.preventDefault()}
     >
+      {/* Ambient aurora behind everything — slow, dark, low-contrast so letters and
+          confetti keep their punch. Skipped under reduce-motion (static gradient only). */}
+      {!reducedMotion && (
+        <div className="aurora" aria-hidden="true">
+          <div className="aurora__blob aurora__blob--1" />
+          <div className="aurora__blob aurora__blob--2" />
+        </div>
+      )}
+
       <Confetti ref={confettiRef} displayMode={displayMode} play={play} />
 
       <ControlsBar

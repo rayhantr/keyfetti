@@ -11,6 +11,7 @@ type Props = {
   x: number; // 0..1 horizontal position to rise from
   color: string;
   rotate: number;
+  drift: string; // horizontal drift (e.g. "5vw") applied after launch for variety
   displayMode: DisplayMode;
   onDone: (id: number) => void;
 };
@@ -33,6 +34,7 @@ export const FloatingLetter = memo(function FloatingLetter({
   x,
   color,
   rotate,
+  drift,
   displayMode,
   onDone,
 }: Props) {
@@ -47,6 +49,7 @@ export const FloatingLetter = memo(function FloatingLetter({
           color,
           textShadow: "0 4px 28px rgba(0,0,0,0.5)",
           "--rotate": `${rotate}deg`,
+          "--drift": drift,
         } as CSSProperties
       }
       onAnimationEnd={() => onDone(id)}
