@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { isLetterOrDigit } from "@/lib/keyboardLayout";
+import { isLetterOrDigit } from "@/lib/keyboard-layout";
 
 export type InputMode = "both" | "letters" | "numbers";
 
@@ -16,7 +16,7 @@ function passesMode(char: string, mode: InputMode): boolean {
 }
 
 /**
- * Global keyboard listener for the smasher. Only plain letters and digits are
+ * Global keyboard listener for the app. Only plain letters and digits are
  * accepted; every other key is swallowed (preventDefault) to keep the page
  * kid-proof against scrolling, find, tab-navigation, etc. Auto-repeat from a
  * held key is ignored so one physical press produces exactly one letter.
@@ -26,9 +26,14 @@ function passesMode(char: string, mode: InputMode): boolean {
  */
 export function useKeyboardInput({ onChar, mode = "both", enabled = true }: Params) {
   const onCharRef = useRef(onChar);
-  onCharRef.current = onChar;
   const modeRef = useRef(mode);
-  modeRef.current = mode;
+
+  // Keep the latest callback/mode in refs — updated after render (not during),
+  // so the window listener below can stay attached without re-binding.
+  useEffect(() => {
+    onCharRef.current = onChar;
+    modeRef.current = mode;
+  });
 
   useEffect(() => {
     if (!enabled) return;

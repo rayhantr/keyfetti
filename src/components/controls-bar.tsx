@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type { DisplayMode } from "./FloatingLetter";
-import type { InputMode } from "@/hooks/useKeyboardInput";
+import type { DisplayMode } from "./floating-letter";
+import type { InputMode } from "@/hooks/use-keyboard-input";
 
 type Props = {
   muted: boolean;

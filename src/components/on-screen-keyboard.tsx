@@ -1,7 +1,7 @@
 "use client";
 
-import { KEY_ROWS } from "@/lib/keyboardLayout";
-import type { InputMode } from "@/hooks/useKeyboardInput";
+import { KEY_ROWS } from "@/lib/keyboard-layout";
+import type { InputMode } from "@/hooks/use-keyboard-input";
 
 type Props = {
   onChar: (char: string) => void;

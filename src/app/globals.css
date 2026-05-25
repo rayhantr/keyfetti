@@ -17,3 +17,52 @@ body {
   overscroll-behavior: none;
   touch-action: manipulation;
 }
+
+/*
+ * Floating letters animate via CSS keyframes (not a JS animation library) so the
+ * compositor runs them off the main thread. This keeps furious smashing smooth
+ * even with dozens of letters on screen at once. `--rotate` is set per letter.
+ * Steps map to the previous timing: 0% / 15% / 75% / 100%.
+ */
+@keyframes float-letter {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8vh) scale(0.5) rotate(0deg);
+  }
+  15% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-2vh) scale(1) rotate(var(--rotate, 0deg));
+  }
+  75% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-45vh) scale(1) rotate(var(--rotate, 0deg));
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-62vh) scale(0.95) rotate(var(--rotate, 0deg));
+  }
+}
+
+.floating-letter {
+  animation: float-letter 2.6s ease-out both;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Honour reduced-motion: fade only, no movement/scale/rotation, and faster. */
+  @keyframes float-letter {
+    0%,
+    100% {
+      opacity: 0;
+      transform: translateX(-50%);
+    }
+    15%,
+    75% {
+      opacity: 1;
+      transform: translateX(-50%);
+    }
+  }
+  .floating-letter {
+    animation-duration: 1.6s;
+  }
+}

@@ -9,7 +9,7 @@ const fredoka = Fredoka({
 });
 
 export const metadata: Metadata = {
-  title: "Keyboard Smasher",
+  title: "Keyfetti",
   description:
     "A playful keyboard toy for kids — press any letter or number and watch it float up and hear it spoken aloud.",
 };

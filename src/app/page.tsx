@@ -1,5 +1,5 @@
-import { KeyboardSmasher } from "@/components/KeyboardSmasher";
+import { MainApp } from "@/components/main-app";
 
 export default function Home() {
-  return <KeyboardSmasher />;
+  return <MainApp />;
 }
