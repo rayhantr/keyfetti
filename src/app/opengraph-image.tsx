@@ -7,3 +7,5 @@ export const contentType = OG_CONTENT_TYPE;
 export default function OpengraphImage() {
   return renderOgCard();
 }
+
+export const runtime = "nodejs";

@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src=".github/assets/cover.png" alt="Keyfetti" width="440" />
+<img src="public/cover.png" alt="Keyfetti" width="440" />
 
 ### A playful, full-screen keyboard toy for kids 🎉
 
