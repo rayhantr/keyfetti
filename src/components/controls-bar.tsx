@@ -149,7 +149,7 @@ export function ControlsBar(props: Props) {
               className="flex transition-opacity hover:opacity-70"
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- animated GIF; next/image would freeze it to one frame */}
-              <img src="/SINDBUG.gif" alt="SINDBUG" className="h-3 w-auto" />
+              <img src="https://sindbug.com/sindbug.gif" alt="SINDBUG" className="h-3 w-auto" />
             </a>
             <a
               href="https://github.com/rayhantr/keyfetti"
